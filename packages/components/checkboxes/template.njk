@@ -13,7 +13,8 @@
 {% set describedBy = "" %}
 
 {% set isConditional = false %}
-{% for item in params.items %}
+{# this does not work!! jinja compat mode clobers the items value #}
+{% for item in params["items"] if "items" in params else [] %}
   {% if item.conditional %}
     {% set isConditional = true %}
   {% endif %}
@@ -44,7 +45,8 @@
 {% endif %}
   <div class="nhsuk-checkboxes {%- if params.classes %} {{ params.classes }}{% endif %} {%- if isConditional %} nhsuk-checkboxes--conditional{% endif -%}"
     {{- nhsukAttributes(params.attributes) }}>
-    {% for item in params.items %}
+    <p>HELLO {{params['items']|dump}} {{params.items|dump}}</p>
+    {% for item in (params["items"] if "items" in params else []) %}
     {% set id = item.id if item.id else idPrefix + "-" + loop.index %}
     {% set name = item.name if item.name else params.name %}
     {% set conditionalId = "conditional-" + id %}
@@ -53,7 +55,7 @@
 	  {%- if item.divider %}
     <div class="nhsuk-checkboxes__divider">{{ item.divider }}</div>
     {%- else %}
-    {% set isChecked = item.checked | default((item.value in params.values and item.checked != false) if params.values else false, true) %}
+    {% set isChecked = item.checked | default((item.value in params["values"] and item.checked != false) if "values" in params else false, true) %}
 
     <div class="nhsuk-checkboxes__item">
       <input class="nhsuk-checkboxes__input" id="{{ id }}" name="{{ name }}" type="checkbox" value="{{ item.value }}"

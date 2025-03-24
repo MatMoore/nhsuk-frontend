@@ -28,6 +28,8 @@ async function buildHTML() {
     lstripBlocks: true
   })
 
+  nunjucks.installJinjaCompat()
+
   for (const path of paths) {
     const { name, dir } = parse(path)
 
